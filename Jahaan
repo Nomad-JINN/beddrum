@@ -1,0 +1,246 @@
+import random
+
+board = [["-" for j in range(4)] for i in range(4)]
+
+p1_tokens = ['1', '2', '3']
+p2_tokens = ['4', '5', '6']
+
+move1 = 0
+move2 = 0
+move3 = 0
+token = ""
+
+
+def game():
+    global move1, move2, move3, p1_tokens, p2_tokens, board, token
+
+    print("Player one has", len(p1_tokens), p1_tokens)
+    print("Player two has", len(p2_tokens), p2_tokens)
+    print("This is the current board")
+    for row in board:
+        print(row)
+
+    def run_token():
+        global token
+        t = int(input("Choose your token number by writng the integer of your token number:"))
+        if t == 1:
+            token = p1_tokens[0]
+            print("Your token is:", token)
+        elif t == 2:
+            token = p1_tokens[1]
+            print("Your token is:", token)
+        elif t == 3:
+            token = p1_tokens[2]
+            print("Your token is:", token)
+        elif t == 4:
+            token = p2_tokens[0]
+            print("Your token is:", token)
+        elif t == 5:
+            token = p2_tokens[1]
+            print("Your token is:", token)
+        elif t == 6:
+            token = p2_tokens[2]
+            print("Your token is:", token)
+        else:
+            print("Wrong input")
+            run_token()
+
+    def roll():
+        global move1, move2
+
+        q = str(input("Type x to roll the dice:"))
+
+        def diceroll1():
+            global move1
+
+            move1 = random.randint(1, 6)
+            print("The dice gave you", move1, "on first roll")
+
+        def diceroll2():
+            global move2
+
+            g = str(input("Type x to roll the second dice:"))
+            if g == "x":
+                move2 = random.randint(1, 6)
+                print("The dice gave you", move2, "on second roll")
+            else:
+                print("Invalid input")
+                diceroll2()
+
+        def diceroll3():
+            global move3
+            k = str(input("Type x to roll the third dice:"))
+            if k == "x":
+                move3 = random.randint(1, 6)
+                print("The dice gave you", move3, "on third roll")
+            else:
+                print("Invalid input")
+                diceroll3()
+
+        if q == "x":
+            diceroll1()
+            if move1 == 6:
+                print("You can roll the dice one more time")
+                diceroll2()
+            if move2 == 6:
+                print("You can roll the dice one more time")
+                diceroll3()
+
+        else:
+            print("Invalid input")
+            roll()
+
+
+    roll()
+
+    if move1 == 6 and move2 == 6 and move3 == 6:
+        print("All your rolls are wasted")
+        print("Other player's turn")
+        return game()
+
+    def move_token(token, steps):
+        global p1_tokens, p2_tokens, board
+        home_tokens = ""
+        away_tokens = ""
+
+        if token in p1_tokens:
+            home_tokens = p1_tokens
+            away_tokens = p2_tokens
+
+        elif token in p2_tokens:
+            home_tokens = p2_tokens
+            away_tokens = p1_tokens
+
+
+
+        def check6():
+            l = board[0][0]
+            for x in range(len(board)):
+                for y in range(len(board[x])):
+
+                    if steps == 6:
+                        if board[x][y] != token:
+                            if board[x][y] == away_tokens[0] or board[x][y] == away_tokens[1] or board[x][y] == away_tokens[2]:
+                                print(board[x][y], "eliminated")
+
+                                board[0][0] = token
+                            else:
+                                board[0][0] = token
+
+
+
+                        else:
+                            board[0][0] = l
+                            return
+
+
+        check6()
+
+
+
+
+
+
+        for i in range(len(board)):
+            for j in range(len(board[i])):
+                if board[i][j] == token:
+                    if i == 3 and j == 3:
+                        print('Token has already reached the end!')
+                    else:
+                        new_i = i + steps // 4
+                        new_j = j + steps % 4
+
+                        if new_j >= 4:
+                            new_i += 1
+                            new_j -= 4
+                        if new_i == 3 and new_j == 3:
+                            board[i][j] = '-'
+                            board[new_i][new_j] = token
+                            print('Token has reached the end!')
+                            return
+                        elif board[new_i][new_j] == '-':
+                            board[i][j] = '-'
+                            board[new_i][new_j] = token
+                            return
+                        else:
+
+
+                            board[i][j] = '-'
+                            board[new_i][new_j] = token
+
+                            print('Token killed!')
+                            return
+
+
+    def moving_token():
+        global move1, move2, move3, p1_tokens, p2_tokens, board, token
+        if move1 != 0 and move2 != 0 and move3 != 0:
+            print("You have three moves")
+            print("for the first move")
+            run_token()
+            o = int(input("Write the number of the diceroll you want to use"))
+            if o == 1:
+                move_token(token,move1)
+                move1 = 0
+            elif o == 2:
+                move_token(token,move2)
+                move2 = 0
+            elif o == 3:
+                move_token(token,move3)
+                move3 = 0
+            print("For your second move")
+            run_token()
+            k = int(input("Write the number of the diceroll you want to use"))
+            if k == 1:
+                move_token(token,move1)
+                move1 = 0
+            elif k == 2:
+                move_token(token,move2)
+                move2 = 0
+            elif k == 3:
+                move_token(token,move3)
+                move3 = 0
+            print("For your third Move")
+            run_token()
+            a = int(input("Write the number of the diceroll you want to use"))
+            if a == 1:
+                move_token(token,move1)
+                move1 = 0
+            if a == 2:
+                move_token(token,move2)
+                move2 = 0
+            if a == 3:
+                move_token(token,move3)
+                move3 = 0
+        elif move1 != 0 and move2 != 0 and move3 == 0:
+            print("You have two moves.")
+            print("for the first move:")
+            run_token()
+            j = int(input("Write the number of the diceroll you want to use"))
+            if j == 1:
+                move_token(token, move1)
+                move1 = 0
+            if j == 2:
+                move_token(token, move2)
+                move2 = 0
+            print("For your second move")
+            run_token()
+            d = int(input("Write the number of diceroll you want to use"))
+            if d == 1:
+                move_token(token, move1)
+                move1 = 0
+            elif d == 2:
+                move_token(token, move2)
+                move2 = 0
+
+        elif move1 != 0 and move2 == 0 and move3 == 0:
+            run_token()
+            move_token(token,move1)
+        move1 = move2 = move3 = 0
+
+        print("Other player's turn")
+        game()
+    moving_token()
+
+
+game()
